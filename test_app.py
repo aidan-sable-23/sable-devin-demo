@@ -27,3 +27,11 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+
+
+@pytest.mark.parametrize("body", [{}, {"name": "x"}, [], ["title"]])
+def test_create_task_without_title_returns_400(client, body):
+    r = client.post("/tasks", json=body)
+    assert r.status_code == 400
+    assert r.get_json() == {"error": "title is required"}
+    assert _tasks == []

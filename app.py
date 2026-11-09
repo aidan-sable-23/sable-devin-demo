@@ -10,6 +10,8 @@ _next_id = 1
 def create_task():
     global _next_id
     data = request.get_json(force=True)
+    if not isinstance(data, dict) or "title" not in data:
+        return jsonify({"error": "title is required"}), 400
     task = {"id": _next_id, "title": data["title"], "done": False}
     _tasks.append(task)
     _next_id += 1
