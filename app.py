@@ -21,7 +21,7 @@ def list_tasks():
     raw_limit = request.args.get("limit")
     if raw_limit is None:
         return jsonify(_tasks)
-    if not raw_limit.isdigit():
+    if not (raw_limit.isascii() and raw_limit.isdigit()):
         return jsonify({"error": "limit must be a non-negative integer"}), 400
     return jsonify(_tasks[: int(raw_limit)])
 

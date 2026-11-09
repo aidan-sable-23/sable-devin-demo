@@ -53,7 +53,7 @@ def test_list_tasks_limit_larger_than_count_returns_all(client):
     assert len(r.get_json()) == 2
 
 
-@pytest.mark.parametrize("limit", ["-1", "abc", "1.5"])
+@pytest.mark.parametrize("limit", ["-1", "abc", "1.5", "²", "", " 2"])
 def test_list_tasks_rejects_invalid_limit(client, limit):
     client.post("/tasks", json={"title": "Task"})
 
