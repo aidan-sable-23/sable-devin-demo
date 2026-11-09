@@ -18,9 +18,12 @@ def create_task():
 
 @app.get("/tasks")
 def list_tasks():
-    # BUG: pagination is off by one — "limit=2" should return 2 tasks, not 3.
-    limit = int(request.args.get("limit", len(_tasks)))
-    return jsonify(_tasks[: limit + 1])
+    raw_limit = request.args.get("limit")
+    if raw_limit is None:
+        return jsonify(_tasks)
+    if not raw_limit.isdigit():
+        return jsonify({"error": "limit must be a non-negative integer"}), 400
+    return jsonify(_tasks[: int(raw_limit)])
 
 
 @app.get("/tasks/<int:task_id>")

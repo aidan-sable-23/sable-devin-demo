@@ -12,6 +12,6 @@ Cognition's Devin. Not a real product.
 
     pytest
 
-`test_list_tasks_respects_limit` currently fails — there is an off-by-one bug in the
-`GET /tasks` pagination (see `app.py`). There's also a feature noted as a TODO: marking a
-task done and deleting a task aren't implemented yet.
+`GET /tasks` accepts an optional `limit` query parameter (a non-negative integer); invalid
+values return `400`. There's also a feature noted as a TODO: marking a task done and
+deleting a task aren't implemented yet.
