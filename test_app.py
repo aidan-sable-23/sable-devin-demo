@@ -35,6 +35,7 @@ def test_list_tasks_respects_limit(client):
     (6, 3, 3),
     (3, 5, 3),
     (3, 0, 0),
+    (3, -1, 0),
 ])
 def test_list_tasks_limit_boundaries(client, total, limit, expected):
     for i in range(total):
