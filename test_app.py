@@ -47,3 +47,17 @@ def test_alerts_for_different_incidents_are_separate(client):
     assert a.status_code == 201
     assert b.status_code == 201
     assert a.get_json()["id"] != b.get_json()["id"]
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [{"data": "not json"}, {"json": ["a"]}, {"json": "x"}, {"json": {}}],
+)
+def test_invalid_alert_request_is_rejected_without_creating_alert(client, kwargs):
+    r = client.post("/incidents/7/alerts", **kwargs)
+    assert r.status_code == 400
+    assert client.get("/incidents/7/alerts").get_json() == []
+
+    retry = client.post("/incidents/7/alerts", json={"message": "real message"})
+    assert retry.status_code == 201
+    assert retry.get_json()["message"] == "real message"

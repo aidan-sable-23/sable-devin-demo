@@ -39,7 +39,10 @@ def get_task(task_id):
 @app.post("/incidents/<int:incident_id>/alerts")
 def create_incident_alert(incident_id):
     global _next_alert_id
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
+    message = data.get("message") if isinstance(data, dict) else None
+    if not isinstance(message, str) or not message:
+        return jsonify({"error": "JSON body with non-empty 'message' required"}), 400
     with _alerts_lock:
         existing = _alerts.get(incident_id)
         if existing is not None:
@@ -47,7 +50,7 @@ def create_incident_alert(incident_id):
         alert = {
             "id": _next_alert_id,
             "incident_id": incident_id,
-            "message": data.get("message", ""),
+            "message": message,
         }
         _alerts[incident_id] = alert
         _next_alert_id += 1
