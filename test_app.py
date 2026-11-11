@@ -30,6 +30,8 @@ def test_list_tasks_respects_limit(client):
 
 
 @pytest.mark.parametrize("limit, expected_titles", [
+    (-2, []),
+    (-1, []),
     (0, []),
     (1, ["Task 0"]),
     (3, ["Task 0", "Task 1", "Task 2"]),

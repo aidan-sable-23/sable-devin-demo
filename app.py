@@ -19,7 +19,7 @@ def create_task():
 @app.get("/tasks")
 def list_tasks():
     limit = int(request.args.get("limit", len(_tasks)))
-    return jsonify(_tasks[:limit])
+    return jsonify(_tasks[:max(limit, 0)])
 
 
 @app.get("/tasks/<int:task_id>")
