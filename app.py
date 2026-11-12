@@ -9,8 +9,11 @@ _next_id = 1
 @app.post("/tasks")
 def create_task():
     global _next_id
-    data = request.get_json(force=True)
-    task = {"id": _next_id, "title": data["title"], "done": False}
+    data = request.get_json(force=True, silent=True)
+    title = data.get("title") if isinstance(data, dict) else None
+    if not isinstance(title, str) or not title.strip():
+        return jsonify({"error": "title must be a non-empty string"}), 400
+    task = {"id": _next_id, "title": title, "done": False}
     _tasks.append(task)
     _next_id += 1
     return jsonify(task), 201
