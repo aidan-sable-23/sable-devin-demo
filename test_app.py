@@ -27,3 +27,4 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+    assert [t["title"] for t in body] == ["Task 0", "Task 1"]
