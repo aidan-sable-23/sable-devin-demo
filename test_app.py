@@ -20,6 +20,17 @@ def test_create_task(client):
     assert r.get_json()["title"] == "Write demo script"
 
 
+@pytest.mark.parametrize(
+    "payload",
+    [{}, {"title": None}, {"title": ""}, {"title": "   "}, {"title": 42}, ["Write demo script"]],
+)
+def test_create_task_rejects_invalid_title(client, payload):
+    r = client.post("/tasks", json=payload)
+    assert r.status_code == 400
+    assert r.get_json() == {"error": "title must be a non-empty string"}
+    assert client.get("/tasks").get_json() == []
+
+
 def test_list_tasks_respects_limit(client):
     for i in range(5):
         client.post("/tasks", json={"title": f"Task {i}"})
