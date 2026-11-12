@@ -27,3 +27,21 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+
+
+@pytest.mark.parametrize("limit", [0, 1, 3, 5, 10])
+def test_list_tasks_returns_first_n_tasks(client, limit):
+    titles = [f"Task {i}" for i in range(5)]
+    for title in titles:
+        client.post("/tasks", json={"title": title})
+
+    body = client.get(f"/tasks?limit={limit}").get_json()
+    assert [t["title"] for t in body] == titles[:limit]
+
+
+def test_list_tasks_without_limit_returns_all(client):
+    for i in range(3):
+        client.post("/tasks", json={"title": f"Task {i}"})
+
+    body = client.get("/tasks").get_json()
+    assert [t["title"] for t in body] == ["Task 0", "Task 1", "Task 2"]
