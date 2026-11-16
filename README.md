@@ -8,6 +8,11 @@ Cognition's Devin. Not a real product.
     pip install -r requirements.txt
     python app.py
 
+## Filter tasks by status
+
+`GET /tasks?status=open` returns tasks that aren't done; `GET /tasks?status=done` returns
+completed ones. Any other `status` value returns `400`. Omit `status` to get every task.
+
 ## Run the tests
 
     pytest
