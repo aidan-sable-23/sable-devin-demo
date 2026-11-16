@@ -16,11 +16,21 @@ def create_task():
     return jsonify(task), 201
 
 
+_STATUS_FILTERS = {"open": False, "done": True}
+
+
 @app.get("/tasks")
 def list_tasks():
+    tasks = _tasks
+    status = request.args.get("status")
+    if status is not None:
+        if status not in _STATUS_FILTERS:
+            return jsonify({"error": "status must be 'open' or 'done'"}), 400
+        tasks = [t for t in tasks if t["done"] == _STATUS_FILTERS[status]]
+
     # BUG: pagination is off by one — "limit=2" should return 2 tasks, not 3.
-    limit = int(request.args.get("limit", len(_tasks)))
-    return jsonify(_tasks[: limit + 1])
+    limit = int(request.args.get("limit", len(tasks)))
+    return jsonify(tasks[: limit + 1])
 
 
 @app.get("/tasks/<int:task_id>")
