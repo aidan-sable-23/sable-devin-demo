@@ -27,3 +27,29 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+
+
+def test_list_tasks_returns_consecutive_pages_without_duplicates(client):
+    task_ids = [
+        client.post("/tasks", json={"title": f"Task {i}"}).get_json()["id"]
+        for i in range(5)
+    ]
+
+    page_ids = []
+    for offset in (0, 2, 4):
+        response = client.get("/tasks", query_string={"limit": 2, "offset": offset})
+        assert response.status_code == 200
+        page_ids.append([task["id"] for task in response.get_json()])
+
+    assert page_ids == [task_ids[:2], task_ids[2:4], task_ids[4:]]
+
+
+@pytest.mark.parametrize("parameter", ["limit", "offset"])
+@pytest.mark.parametrize("value", [-1, "invalid"])
+def test_list_tasks_rejects_invalid_pagination(client, parameter, value):
+    for i in range(3):
+        client.post("/tasks", json={"title": f"Task {i}"})
+
+    response = client.get("/tasks", query_string={parameter: value})
+
+    assert response.status_code == 400
