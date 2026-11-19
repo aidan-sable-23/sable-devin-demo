@@ -11,7 +11,8 @@ Cognition's Devin. Not a real product.
 ## List tasks
 
 `GET /tasks` returns all tasks by default. Use `limit` for the maximum page
-size and `offset` for the number of tasks to skip. For example, request
+size and `offset` for the number of tasks to skip. Both accept non-negative
+integers. For example, request
 `/tasks?limit=2` and then `/tasks?limit=2&offset=2` for the first two pages.
 
 ## Run the tests

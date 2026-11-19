@@ -18,8 +18,15 @@ def create_task():
 
 @app.get("/tasks")
 def list_tasks():
-    offset = int(request.args.get("offset", 0))
-    limit = int(request.args.get("limit", len(_tasks)))
+    try:
+        offset = int(request.args.get("offset", 0))
+        limit = int(request.args.get("limit", len(_tasks)))
+    except ValueError:
+        return jsonify({"error": "limit and offset must be integers"}), 400
+
+    if offset < 0 or limit < 0:
+        return jsonify({"error": "limit and offset must be non-negative"}), 400
+
     return jsonify(_tasks[offset:offset + limit])
 
 
