@@ -73,6 +73,12 @@ def test_export_tasks_csv(client):
     ]
 
 
+def test_export_tasks_csv_columns_match_task_fields(client):
+    client.post("/tasks", json={"title": "A"})
+    header = client.get("/tasks/export").get_data(as_text=True).splitlines()[0]
+    assert header.split(",") == list(_tasks[0].keys())
+
+
 def test_export_tasks_csv_empty(client):
     r = client.get("/tasks/export")
     assert r.get_data(as_text=True).strip() == "id,title,status,done,tags,due_date"
