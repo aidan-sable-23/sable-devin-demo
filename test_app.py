@@ -120,6 +120,15 @@ def test_filter_tasks_by_tag(client):
     assert _titles(client.get("/tasks?tag=none")) == []
 
 
+def test_filter_tasks_by_tag_is_case_insensitive(client):
+    client.post("/tasks", json={"title": "A", "tags": ["Work"]})
+    client.post("/tasks", json={"title": "B", "tags": ["home"]})
+    client.post("/tasks", json={"title": "C", "tags": ["WORK"]})
+    assert _titles(client.get("/tasks?tag=work")) == ["A", "C"]
+    assert _titles(client.get("/tasks?tag=wOrK")) == ["A", "C"]
+    assert client.get("/tasks?tag=work").get_json()[0]["tags"] == ["Work"]
+
+
 def test_sort_tasks_by_due_date(client):
     client.post("/tasks", json={"title": "late", "due_date": "2026-12-31"})
     client.post("/tasks", json={"title": "undated"})

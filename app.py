@@ -61,7 +61,8 @@ def list_tasks():
     tasks = _tasks
     tag = request.args.get("tag")
     if tag is not None:
-        tasks = [t for t in tasks if tag in t["tags"]]
+        tag = tag.casefold()
+        tasks = [t for t in tasks if any(tag == x.casefold() for x in t["tags"])]
 
     sort = request.args.get("sort")
     if sort is not None:

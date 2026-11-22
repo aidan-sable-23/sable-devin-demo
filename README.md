@@ -12,7 +12,7 @@ Cognition's Devin. Not a real product.
 
 - `POST /tasks` — create a task. Body: `title` (required), `status` (`todo` | `in_progress` | `done`,
   default `todo`), `tags` (list of strings), `due_date` (`YYYY-MM-DD`).
-- `GET /tasks` — list tasks. Query params: `tag=<tag>` to filter, `sort=due_date` or
+- `GET /tasks` — list tasks. Query params: `tag=<tag>` to filter (case-insensitive), `sort=due_date` or
   `sort=-due_date` to sort (tasks without a due date go last), `limit=<n>`.
 - `GET /tasks/<id>` — fetch one task.
 - `GET /tasks/export` — download all tasks as CSV (tags joined with `;`).
