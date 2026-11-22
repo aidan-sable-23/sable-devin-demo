@@ -92,7 +92,7 @@ def export_tasks():
     return Response(
         buf.getvalue(),
         mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=tasks.csv"},
+        headers={"Content-Disposition": f"attachment; filename=tasks-{date.today().isoformat()}.csv"},
     )
 
 

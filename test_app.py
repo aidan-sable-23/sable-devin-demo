@@ -2,6 +2,8 @@
 import csv
 import io
 
+from datetime import date
+
 import pytest
 from app import app, _tasks
 
@@ -68,7 +70,7 @@ def test_export_tasks_csv(client):
     r = client.get("/tasks/export")
     assert r.status_code == 200
     assert r.mimetype == "text/csv"
-    assert "attachment" in r.headers["Content-Disposition"]
+    assert r.headers["Content-Disposition"] == f"attachment; filename=tasks-{date.today().isoformat()}.csv"
     rows = list(csv.DictReader(io.StringIO(r.get_data(as_text=True))))
     assert rows == [
         {"id": str(a["id"]), "title": "A", "status": "done", "done": "True", "tags": "x;y", "due_date": "2026-12-01"},

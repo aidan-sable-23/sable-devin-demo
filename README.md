@@ -15,7 +15,7 @@ Cognition's Devin. Not a real product.
 - `GET /tasks` — list tasks. Query params: `tag=<tag>` to filter (case-insensitive), `sort=due_date` or
   `sort=-due_date` to sort (tasks without a due date go last), `limit=<n>`.
 - `GET /tasks/<id>` — fetch one task.
-- `GET /tasks/export` — download all tasks as CSV (tags joined with `;`).
+- `GET /tasks/export` — download all tasks as `tasks-YYYY-MM-DD.csv` (today's date; tags joined with `;`).
 - `GET /tasks/stats` — `{"total": n, "by_status": {"todo": n, "in_progress": n, "done": n}}`.
 
 ## Run the tests
