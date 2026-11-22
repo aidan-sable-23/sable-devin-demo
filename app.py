@@ -30,6 +30,8 @@ def _parse_due_date(value):
 def create_task():
     global _next_id
     data = request.get_json(force=True)
+    if not isinstance(data.get("title"), str):
+        return jsonify({"error": "title must be a string"}), 400
     status = data.get("status", "todo")
     if status not in STATUSES:
         return jsonify({"error": f"status must be one of {list(STATUSES)}"}), 400

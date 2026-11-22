@@ -47,6 +47,9 @@ def test_create_task_defaults(client):
 @pytest.mark.parametrize(
     "payload",
     [
+        {},
+        {"title": 123},
+        {"title": None},
         {"title": "A", "status": "blocked"},
         {"title": "A", "tags": "urgent"},
         {"title": "A", "due_date": "next tuesday"},
