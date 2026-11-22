@@ -78,6 +78,15 @@ def test_export_tasks_csv_empty(client):
     assert r.get_data(as_text=True).strip() == "id,title,status,done,tags,due_date"
 
 
+def test_export_tasks_csv_neutralizes_formulas(client):
+    client.post("/tasks", json={"title": "=HYPERLINK(\"http://evil\")", "tags": ["+cmd", "ok"]})
+    client.post("/tasks", json={"title": "-1+1"})
+    client.post("/tasks", json={"title": "@SUM(A1)"})
+    rows = list(csv.DictReader(io.StringIO(client.get("/tasks/export").get_data(as_text=True))))
+    assert [r["title"] for r in rows] == ["'=HYPERLINK(\"http://evil\")", "'-1+1", "'@SUM(A1)"]
+    assert rows[0]["tags"] == "'+cmd;ok"
+
+
 def test_task_stats(client):
     for status in ("todo", "todo", "in_progress", "done"):
         client.post("/tasks", json={"title": status, "status": status})

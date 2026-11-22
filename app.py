@@ -13,6 +13,13 @@ STATUSES = ("todo", "in_progress", "done")
 CSV_FIELDS = ("id", "title", "status", "done", "tags", "due_date")
 
 
+def _csv_safe(value):
+    # Neutralize spreadsheet formula injection (OWASP CSV injection guidance).
+    if value and value[0] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + value
+    return value
+
+
 def _parse_due_date(value):
     if value is None:
         return None
@@ -73,7 +80,12 @@ def export_tasks():
     writer = csv.DictWriter(buf, fieldnames=CSV_FIELDS)
     writer.writeheader()
     for t in _tasks:
-        writer.writerow({**t, "tags": ";".join(t["tags"]), "due_date": t["due_date"] or ""})
+        writer.writerow({
+            **t,
+            "title": _csv_safe(t["title"]),
+            "tags": _csv_safe(";".join(t["tags"])),
+            "due_date": t["due_date"] or "",
+        })
     return Response(
         buf.getvalue(),
         mimetype="text/csv",
