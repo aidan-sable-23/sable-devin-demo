@@ -92,3 +92,11 @@ def test_activity_log_skips_rejected_changes(client):
     client.post("/tasks", json={"title": "Bad", "priority": "urgent"})
     client.post("/tasks/bulk-delete", json={"ids": [12345]})
     assert client.get("/activity").get_json() == []
+
+
+@pytest.mark.parametrize("body", [{}, {"title": None}, {"title": 5}])
+def test_create_task_rejects_non_string_title(client, body):
+    r = client.post("/tasks", json=body)
+    assert r.status_code == 400
+    assert _tasks == []
+    assert client.get("/tasks/search?q=x").status_code == 200
