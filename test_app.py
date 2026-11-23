@@ -111,3 +111,10 @@ def test_activity_log_ignores_failed_operations(client):
     client.post("/tasks", json={"title": "Bad", "priority": "urgent"})
     client.post("/tasks/bulk-delete", json={"ids": [12345]})
     assert client.get("/activity").get_json() == []
+
+
+@pytest.mark.parametrize("title", [123, None, ["x"]])
+def test_create_task_rejects_non_string_title(client, title):
+    r = client.post("/tasks", json={"title": title})
+    assert r.status_code == 400
+    assert _tasks == []

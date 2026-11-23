@@ -31,6 +31,8 @@ def _log_activity(action, task):
 def create_task():
     global _next_id
     data = request.get_json(force=True)
+    if not isinstance(data.get("title"), str):
+        return jsonify({"error": "title must be a string"}), 400
     priority = data.get("priority", DEFAULT_PRIORITY)
     if priority not in PRIORITIES:
         return jsonify({"error": f"priority must be one of {list(PRIORITIES)}"}), 400
