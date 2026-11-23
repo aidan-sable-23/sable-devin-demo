@@ -56,7 +56,9 @@ def test_bulk_delete_removes_listed_tasks(client):
     assert [t["id"] for t in _tasks] == [ids[1]]
 
 
-@pytest.mark.parametrize("body", [{}, {"ids": "1"}, {"ids": [1, "2"]}, {"ids": [True]}])
+@pytest.mark.parametrize(
+    "body", [{}, [1], "x", 5, True, {"ids": "1"}, {"ids": [1, "2"]}, {"ids": [True]}]
+)
 def test_bulk_delete_rejects_invalid_ids(client, body):
     client.post("/tasks", json={"title": "Keep me"})
     r = client.post("/tasks/bulk-delete", json=body)
