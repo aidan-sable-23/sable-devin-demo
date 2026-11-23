@@ -61,8 +61,8 @@ def search_tasks():
 
 @app.post("/tasks/bulk-delete")
 def bulk_delete_tasks():
-    data = request.get_json(silent=True) or {}
-    ids = data.get("ids")
+    data = request.get_json(silent=True)
+    ids = data.get("ids") if isinstance(data, dict) else None
     if not isinstance(ids, list) or not all(
         isinstance(i, int) and not isinstance(i, bool) for i in ids
     ):
