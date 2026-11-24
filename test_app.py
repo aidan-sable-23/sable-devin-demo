@@ -27,3 +27,15 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+
+
+def test_consecutive_pages_do_not_overlap(client):
+    ids = [client.post("/tasks", json={"title": f"Task {i}"}).get_json()["id"] for i in range(5)]
+    page_size = 2
+
+    page1 = [t["id"] for t in client.get(f"/tasks?limit={page_size}").get_json()]
+    page2 = [t["id"] for t in client.get(f"/tasks?limit={2 * page_size}").get_json()][page_size:]
+
+    assert page1 == ids[:2]
+    assert page2 == ids[2:4]
+    assert not set(page1) & set(page2)
