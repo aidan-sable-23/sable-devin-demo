@@ -16,11 +16,16 @@ def create_task():
     return jsonify(task), 201
 
 
+def paginate(items, limit):
+    """Return the first page of `items` for the given `limit`."""
+    # BUG: pagination is off by one — "limit=2" should return 2 items, not 3.
+    return items[: limit + 1]
+
+
 @app.get("/tasks")
 def list_tasks():
-    # BUG: pagination is off by one — "limit=2" should return 2 tasks, not 3.
     limit = int(request.args.get("limit", len(_tasks)))
-    return jsonify(_tasks[: limit + 1])
+    return jsonify(paginate(_tasks, limit))
 
 
 @app.get("/tasks/<int:task_id>")
