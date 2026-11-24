@@ -27,3 +27,19 @@ def test_list_tasks_respects_limit(client):
     r = client.get("/tasks?limit=2")
     body = r.get_json()
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
+
+
+def test_completed_count_is_zero_for_empty_list(client):
+    r = client.get("/tasks")
+    assert r.get_json() == []
+    assert r.headers["X-Completed-Count"] == "0"
+
+
+def test_completed_count_counts_done_tasks(client):
+    for i in range(3):
+        client.post("/tasks", json={"title": f"Task {i}"})
+    _tasks[0]["done"] = True
+    _tasks[2]["done"] = True
+
+    r = client.get("/tasks?limit=0")
+    assert r.headers["X-Completed-Count"] == "2"
