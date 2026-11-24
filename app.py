@@ -20,7 +20,9 @@ def create_task():
 def list_tasks():
     # BUG: pagination is off by one — "limit=2" should return 2 tasks, not 3.
     limit = int(request.args.get("limit", len(_tasks)))
-    return jsonify(_tasks[: limit + 1])
+    response = jsonify(_tasks[: limit + 1])
+    response.headers["X-Completed-Count"] = str(sum(1 for t in _tasks if t["done"]))
+    return response
 
 
 @app.get("/tasks/<int:task_id>")
