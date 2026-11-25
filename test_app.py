@@ -29,8 +29,8 @@ def test_list_tasks_respects_limit(client):
     assert len(body) == 2, f"expected 2 tasks with limit=2, got {len(body)}"
 
 
-@pytest.mark.parametrize("page", [0, -1])
-def test_list_tasks_rejects_non_positive_page(client, page):
+@pytest.mark.parametrize("page", [0, -1, "-1.0", "abc"])
+def test_list_tasks_rejects_invalid_page(client, page):
     r = client.get("/tasks", query_string={"page": page})
     assert r.status_code == 400
     assert r.get_json() == {"error": "page must be a positive integer"}
